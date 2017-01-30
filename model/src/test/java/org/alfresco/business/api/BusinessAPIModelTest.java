@@ -22,20 +22,10 @@ import static org.junit.Assert.*;
 /**
  * Created by msalatino on 30/01/2017.
  */
-public class ModelTest {
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
+public class BusinessAPIModelTest {
 
     @Test
-    public void testModelConsumer(){
+    public void testAPIModelFromConsumer(){
         DesignModel designModel = new BaseDesignModel("model id", "my first model", "content of the model"){};
 
         // Generators are going to be provided
