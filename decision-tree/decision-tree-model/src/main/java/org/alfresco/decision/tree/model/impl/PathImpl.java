@@ -11,11 +11,7 @@ public class PathImpl implements Path {
     private String condition;
     private Node nodeTo;
 
-    public PathImpl() {
-    }
-
-    public PathImpl( String condition ) {
-        this.condition = condition;
+    protected PathImpl() {
     }
 
     public PathImpl( Operator operator, String condition ) {
@@ -23,40 +19,23 @@ public class PathImpl implements Path {
         this.operator = operator;
     }
 
-    public PathImpl( Operator operator, String condition, Node nodeTo ) {
-        this.condition = condition;
-        this.operator = operator;
-        this.nodeTo = nodeTo;
-    }
-
     @Override
-    public String getCondition() {
+    public String condition() {
         return condition;
     }
 
     @Override
-    public void setCondition( String condition ) {
-        this.condition = condition;
-    }
-
-    @Override
-    public Node getNodeTo() {
+    public Node nodeTo() {
         return nodeTo;
     }
 
     @Override
-    public void setNodeTo( Node node ) {
-        this.nodeTo = node;
-    }
-
-    @Override
-    public Operator getOperator() {
+    public Operator operator() {
         return operator;
     }
 
     @Override
-    public void setOperator( Operator operator ) {
-        this.operator = operator;
+    public void setNodeTo(Node node) {
+        this.nodeTo = node;
     }
-
 }

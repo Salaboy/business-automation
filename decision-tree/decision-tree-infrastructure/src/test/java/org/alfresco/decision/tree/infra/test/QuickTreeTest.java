@@ -1,5 +1,5 @@
 
-package org.alfrfesco.decision.tree.infra.test;
+package org.alfresco.decision.tree.infra.test;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,6 +14,7 @@ import org.alfresco.decision.tree.infra.impl.QuickTree;
 import org.alfresco.decision.tree.model.api.*;
 import org.alfresco.decision.tree.model.api.fluent.TreeFluent;
 import org.alfresco.decision.tree.model.impl.*;
+import org.alfresco.decision.tree.model.impl.handlers.PrintoutHandler;
 import org.junit.Test;
 
 import static org.alfresco.decision.tree.model.api.Path.Operator.EQUALS;
@@ -31,8 +32,11 @@ public class QuickTreeTest {
     public void hello() throws CannotCompileException, InstantiationException, NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
 
 
-        Tree t = new TreeImpl("id", "my person tree", "my model content",  Person.class);
+
         ConditionalNode ageNode = new ConditionalNodeImpl("n0", "age");
+
+        Tree t = new TreeImpl("my person tree", Person.class, ageNode);
+
         Path lt30Path = new PathImpl(LESS_THAN, "30");
         ConditionalNode cityNode = new ConditionalNodeImpl("n1", "city");
         lt30Path.setNodeTo(cityNode);
@@ -61,7 +65,6 @@ public class QuickTreeTest {
         marriedNode.addPath(marriedPath);
         marriedNode.addPath(notMarriedPath);
 
-        t.setRootNode(ageNode);
 
         String generated = QuickTree.generateCode(t);
 
@@ -148,10 +151,10 @@ public class QuickTreeTest {
     private String generateGraphviz(Tree t) throws NoSuchFieldException {
         StringBuilder sb = new StringBuilder();
         sb.append("digraph G {\n \t rankdir=LR; \n");
-        Node node = t.getRootNode();
-        sb.append("\t \"").append(t.getClazz().getName()).append("\" -> \"").append(node.getName()).append("?\" \n");
+        Node node = t.rootNode();
+        sb.append("\t \"").append(t.clazz().getName()).append("\" -> \"").append(node.name()).append("?\" \n");
 
-        evalNode(t.getClazz(), node, sb);
+        evalNode(t.clazz(), node, sb);
 
         sb.append("}");
         return sb.toString();
@@ -159,14 +162,14 @@ public class QuickTreeTest {
 
     private void evalNode(Class type, Node node, StringBuilder sb) throws NoSuchFieldException {
         if (node instanceof ConditionalNode) {
-            for (Path p : ((ConditionalNode) node).getPaths()) {
-                sb.append("\t \"").append(node.getName()).append("?\" -> \"").append(p.getNodeTo().getName())
+            for (Path p : ((ConditionalNode) node).paths()) {
+                sb.append("\t \"").append(node.name()).append("?\" -> \"").append(p.nodeTo().name())
                         .append("?\" [label = \"");
-                Class<?> fieldType = type.getDeclaredField(node.getName()).getType();
+                Class<?> fieldType = type.getDeclaredField(node.name()).getType();
                 String operatorString = QuickTree.resolveOperatorBasedOnType(p, fieldType, true);
                 sb.append(operatorString);
                 sb.append("\"] \n");
-                evalNode(type, p.getNodeTo(), sb);
+                evalNode(type, p.nodeTo(), sb);
 
             }
         } else if (node instanceof EndNode) {

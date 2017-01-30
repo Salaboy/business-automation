@@ -3,6 +3,8 @@ package org.alfresco.business.base;
 
 import org.alfresco.business.api.DesignModel;
 
+import java.util.UUID;
+
 /**
  * Created by msalatino on 27/01/2017.
  */
@@ -11,15 +13,10 @@ public abstract class BaseDesignModel implements DesignModel {
     private String name;
     private String content;
 
-    public BaseDesignModel(String id, String name, String content) {
-        this.id = id;
+    public BaseDesignModel(String name, String content) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.content = content;
-    }
-
-    @Override
-    public String id() {
-        return id;
     }
 
     @Override
@@ -30,5 +27,10 @@ public abstract class BaseDesignModel implements DesignModel {
     @Override
     public String content() {
         return content;
+    }
+
+    @Override
+    public String id() {
+        return id;
     }
 }

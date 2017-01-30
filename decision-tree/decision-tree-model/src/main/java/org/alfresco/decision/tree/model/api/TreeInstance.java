@@ -7,6 +7,6 @@ import java.util.Map;
 
 public interface TreeInstance {
 
-    public void eval( Object instance, Map handlers );
+    void eval( Object instance, Map handlers );
 }
 

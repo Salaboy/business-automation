@@ -19,23 +19,14 @@ public class EndNodeImpl implements EndNode {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
     }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public void setName( String name ) {
-        this.name = name;
-    }
 
 }

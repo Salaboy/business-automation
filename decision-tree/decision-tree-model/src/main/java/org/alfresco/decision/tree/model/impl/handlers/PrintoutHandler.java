@@ -1,6 +1,6 @@
 
 
-package org.alfresco.decision.tree.model.impl;
+package org.alfresco.decision.tree.model.impl.handlers;
 
 
 import org.alfresco.decision.tree.model.api.Handler;

@@ -17,9 +17,7 @@ public class ConditionalNodeImpl implements ConditionalNode {
     private Collection<Path> paths;
     
 
-    public ConditionalNodeImpl() {
-
-    }
+    public ConditionalNodeImpl() {}
 
     public ConditionalNodeImpl( String id,  String name ) {
         this.id = id;
@@ -27,14 +25,10 @@ public class ConditionalNodeImpl implements ConditionalNode {
     }
 
     @Override
-    public Collection<Path> getPaths() {
+    public Collection<Path> paths() {
         return paths;
     }
 
-    @Override
-    public void setPaths( Collection<Path> paths ) {
-        this.paths = paths;
-    }
 
     @Override
     public void addPath( Path p ) {
@@ -45,23 +39,13 @@ public class ConditionalNodeImpl implements ConditionalNode {
     }
 
     @Override
-    public String getName() {
+    public String name() {
         return name;
     }
 
     @Override
-    public String getId() {
+    public String id() {
         return id;
-    }
-
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public void setName( String name ) {
-        this.name = name;
     }
 
 

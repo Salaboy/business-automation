@@ -23,8 +23,11 @@ public class DecisionTreeAPITest {
 
     @Test
     public void simplDecisionTreeAPITest(){
-        Tree t = new TreeImpl("id", "my person tree", "my model content",  Person.class);
+
         ConditionalNode ageNode = new ConditionalNodeImpl("n0", "age");
+
+        Tree t = new TreeImpl( "my person tree", Person.class, ageNode);
+
         Path lt30Path = new PathImpl(LESS_THAN, "30");
         ConditionalNode cityNode = new ConditionalNodeImpl("n1", "city");
         lt30Path.setNodeTo(cityNode);
@@ -53,7 +56,7 @@ public class DecisionTreeAPITest {
         marriedNode.addPath(marriedPath);
         marriedNode.addPath(notMarriedPath);
 
-        t.setRootNode(ageNode);
+        assertEquals(ageNode, t.rootNode().path().nodeTo());
 
 
     }
@@ -75,6 +78,7 @@ public class DecisionTreeAPITest {
                 .endCondition()
                 .build();
 
+        assertEquals("age", t.rootNode().path().nodeTo().name());
 
 
     }

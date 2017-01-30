@@ -4,19 +4,16 @@ package org.alfresco.decision.tree.model.api;
 
 public interface Path {
 
-    public enum Operator {
-        EQUALS, GREATER_THAN, LESS_THAN
+    enum Operator {
+        EQUALS, GREATER_THAN, LESS_THAN, FORWARD
     };
 
-    String getCondition();
+    String condition();
 
-    void setCondition(String condition);
+    Operator operator();
 
-    Operator getOperator();
-
-    void setOperator(Operator operator);
-
-    Node getNodeTo();
+    Node nodeTo();
 
     void setNodeTo(Node node);
+
 }

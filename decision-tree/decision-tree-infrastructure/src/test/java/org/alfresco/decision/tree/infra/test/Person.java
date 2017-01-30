@@ -1,4 +1,4 @@
-package org.alfrfesco.decision.tree.infra.test;
+package org.alfresco.decision.tree.infra.test;
 
 
 import org.alfresco.decision.tree.model.api.Handler;

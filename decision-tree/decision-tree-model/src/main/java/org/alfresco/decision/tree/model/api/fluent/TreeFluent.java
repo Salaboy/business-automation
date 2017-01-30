@@ -18,25 +18,30 @@ import java.util.Deque;
 public class TreeFluent {
 
     private Tree tree;
-    private Node rootNode;
     private Path currentPath;
     private final Deque<Node> nodeStack = new ArrayDeque<>();
-    private static int nodeIdGenerator = 0;
+    private static int nodeIdGenerator = 1;
+    private String name;
+    private Class clazz;
 
     public TreeFluent newTree(String name,  Class clazz) {
-        tree = new TreeImpl("", name, "", clazz);
+
+        this.name = name;
+        this.clazz = clazz;
+
         return this;
     }
 
     public TreeFluent condition(String name) {
-        //push stack
         ConditionalNodeImpl node = new ConditionalNodeImpl("n" + nodeIdGenerator++, name);
-        if (rootNode == null) {
-            tree.setRootNode(node);
-            rootNode = node;
-        } else {
-            currentPath.setNodeTo(node);
+        //push stack
+        if(tree == null){
+            tree = new TreeImpl( name, clazz, node);
         }
+        if(tree.rootNode().path() != null && currentPath == null){
+            currentPath = tree.rootNode().path();
+        }
+        currentPath.setNodeTo(node);
         nodeStack.push(node);
         return this;
 

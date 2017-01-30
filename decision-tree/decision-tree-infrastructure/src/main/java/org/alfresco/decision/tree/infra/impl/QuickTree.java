@@ -25,10 +25,10 @@ public class QuickTree {
 
     public static String generateCode(Tree t) throws NoSuchFieldException {
         StringBuilder sb = new StringBuilder();
-        Node rootNode = t.getRootNode();
+        Node rootNode = t.rootNode();
         sb.append("public void eval( ").append(" Object instance")
                 .append(", java.util.Map handlers) { \n");
-        go(t.getClazz(), rootNode, sb, 0);
+        go(t.clazz(), rootNode, sb, 0);
         sb.append("}\n");
         return sb.toString();
     }
@@ -39,26 +39,26 @@ public class QuickTree {
             tabs.append("\t");
         }
         if (node instanceof RootNode) {
-            Path onlyPath = ((RootNode) node).getOnlyPath();
-            go(type, onlyPath.getNodeTo(), sb, level + 1);
+            Path onlyPath = ((RootNode) node).path();
+            go(type, onlyPath.nodeTo(), sb, level + 1);
         }
         if (node instanceof ConditionalNode) {
             int i = 0;
-            Collection<Path> paths = ((ConditionalNode) node).getPaths();
+            Collection<Path> paths = ((ConditionalNode) node).paths();
             for (Path path : paths) {
                 if (i == 0) {
                     sb.append(tabs.toString());
                 }
                 sb.append("if ( ").append("((").append(type.getCanonicalName()).append(")instance).").append("get")
-                        .append(node.getName().substring(0, 1).toUpperCase()).append(node.getName().substring(1)).append("( )");
+                        .append(node.name().substring(0, 1).toUpperCase()).append(node.name().substring(1)).append("( )");
                 //Figure out operator based on type:
-                Class<?> fieldType = type.getDeclaredField(node.getName()).getType();
+                Class<?> fieldType = type.getDeclaredField(node.name()).getType();
                 String operatorString = resolveOperatorBasedOnType(path, fieldType, false);
 
                 sb.append(operatorString);
 
                 sb.append(" ) { \n");
-                go(type, path.getNodeTo(), sb, level + 1);
+                go(type, path.nodeTo(), sb, level + 1);
                 if ((paths.size() == 1 && i == 0) || paths.size() == i + 1) {
                     sb.append(tabs.toString()).append(" }\n");
                 } else {
@@ -67,7 +67,7 @@ public class QuickTree {
                 i++;
             }
         } else if (node instanceof EndNode) {
-            sb.append(tabs.toString()).append("((org.alfresco.decision.tree.model.api.Handler)").append("handlers.get( \"").append(node.getName()).append("\" )).execute();\n");
+            sb.append(tabs.toString()).append("((org.alfresco.decision.tree.model.api.Handler)").append("handlers.get( \"").append(node.name()).append("\" )).execute();\n");
 
         }
 
@@ -75,30 +75,30 @@ public class QuickTree {
 
     public static String resolveOperatorBasedOnType(Path path, Class<?> fieldType, boolean friendly) {
         StringBuilder operatorSb = new StringBuilder();
-        switch (path.getOperator()) {
+        switch (path.operator()) {
             case GREATER_THAN:
                 if (fieldType.equals(int.class) || fieldType.equals(Integer.class)) {
-                    operatorSb.append(".intValue() > ").append(path.getCondition());
+                    operatorSb.append(".intValue() > ").append(path.condition());
 
                 }
                 break;
             case LESS_THAN:
                 if (fieldType.equals(int.class) || fieldType.equals(Integer.class)) {
-                    operatorSb.append(".intValue() < ").append(path.getCondition());
+                    operatorSb.append(".intValue() < ").append(path.condition());
                 }
                 break;
             case EQUALS:
                 if (fieldType.equals(boolean.class) || fieldType.equals(Boolean.class)) {
                     if (!friendly) {
-                        operatorSb.append(".booleanValue() ==").append(path.getCondition());
+                        operatorSb.append(".booleanValue() ==").append(path.condition());
                     } else {
-                        operatorSb.append(path.getCondition());
+                        operatorSb.append(path.condition());
                     }
                 } else if (fieldType.equals(String.class)) {
                     if (!friendly) {
-                        operatorSb.append(".equals(\"").append(path.getCondition()).append("\")");
+                        operatorSb.append(".equals(\"").append(path.condition()).append("\")");
                     } else {
-                        operatorSb.append(path.getCondition());
+                        operatorSb.append(path.condition());
                     }
                 }
                 break;

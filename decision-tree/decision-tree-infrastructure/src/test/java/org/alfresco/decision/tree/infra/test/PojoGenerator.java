@@ -1,4 +1,4 @@
-package org.alfrfesco.decision.tree.infra.test;
+package org.alfresco.decision.tree.infra.test;
 
 import java.io.Serializable;
 import java.util.Map;

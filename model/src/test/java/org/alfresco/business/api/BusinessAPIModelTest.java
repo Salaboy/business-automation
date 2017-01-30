@@ -9,15 +9,10 @@ import org.alfresco.business.api.tests.mocks.MockGeneratorEventListener;
 import org.alfresco.business.base.BaseDesignModel;
 import org.alfresco.business.base.BaseExecutableModel;
 import org.alfresco.business.base.BaseGenerator;
-import org.alfresco.business.base.listeners.BaseGeneratorEventListener;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.*;
+
 
 /**
  * Created by msalatino on 30/01/2017.
@@ -26,7 +21,7 @@ public class BusinessAPIModelTest {
 
     @Test
     public void testAPIModelFromConsumer(){
-        DesignModel designModel = new BaseDesignModel("model id", "my first model", "content of the model"){};
+        DesignModel designModel = new BaseDesignModel("model id", "my first model"){};
 
         // Generators are going to be provided
         BaseGenerator generator = new BaseGenerator() {
@@ -62,14 +57,14 @@ public class BusinessAPIModelTest {
         // This is the actual executableModel that can be used in runtime
         ExecutableModel executableModel = generator.generate(designModel);
 
-        assertEquals(2, mockGeneratorEventListener.events().size());
+        Assert.assertEquals(2, mockGeneratorEventListener.events().size());
 
         MockExecutionEventListener mockExecutionEventListener = new MockExecutionEventListener();
         executableModel.addEventListener(mockExecutionEventListener);
 
         executableModel.execute(new Object());
 
-        assertEquals(2, mockExecutionEventListener.events().size());
+        Assert.assertEquals(2, mockExecutionEventListener.events().size());
 
 
     }
