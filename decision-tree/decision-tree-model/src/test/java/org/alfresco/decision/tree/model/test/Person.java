@@ -1,7 +1,5 @@
-package org.alfrfesco.decision.tree.infra.test;
+package org.alfresco.decision.tree.model.test;
 
-
-import org.alfresco.decision.tree.model.api.Handler;
 
 public class Person {
 
@@ -12,7 +10,7 @@ public class Person {
     public Person() {
     }
 
-    public Person( String city, Integer age, Boolean married ) {
+    public Person(String city, Integer age, Boolean married ) {
         this.city = city;
         this.age = age;
         this.married = married;

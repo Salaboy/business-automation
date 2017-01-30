@@ -13,11 +13,7 @@
 
 
     <dependencies>
-        <dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>decision-tree-model</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+        
         <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>model</artifactId>

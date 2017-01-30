@@ -91,7 +91,7 @@ public class QuickTreeTest {
 
     @Test
     public void fluentAPITest() throws RuntimeException, IllegalAccessException, InstantiationException, CannotCompileException, NoSuchFieldException {
-        Tree t = new TreeFluent().newTree("id", "my person tree", "", Person.class)
+        Tree t = new TreeFluent().newTree( "my person tree", Person.class)
                 .condition("age")
                 .path(LESS_THAN, "30")
                 .condition("city")
