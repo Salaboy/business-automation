@@ -1,0 +1,6 @@
+{
+    "type": "Person",
+    "age": "java.lang.Integer",
+    "married": "java.lang.Boolean",
+    "city": "java.lang.String"
+}
