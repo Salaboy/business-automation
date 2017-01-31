@@ -3,5 +3,5 @@
 package org.alfresco.decision.tree.model.api;
 
 public interface Handler {
-    void execute();
+    void notifyDecisionMade(String nodeName);
 }

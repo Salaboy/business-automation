@@ -42,23 +42,29 @@ public class Person {
         this.married = married;
     }
 
-//    public void eval( Person instance, java.util.Map<String, Handler> handlers ) {
-//        if ( instance.getAge() < 30 ) {
-//            if ( instance.getCity().equals( "London" ) ) {
-//                if ( instance.getMarried() == false ) {
-//                    handlers.get( "Send Ad 1" ).execute();
-//                }
-//                if ( instance.getMarried() == true ) {
-//                    handlers.get( "Send Ad 2" ).execute();
-//                }
-//            }
-//            if ( instance.getCity().equals( "Mendoza" ) ) {
-//                handlers.get( "Doesn't Apply" ).execute();
-//            }
-//        }
-//        if ( instance.getAge() > 30 ) {
-//            handlers.get( "Too Old" ).execute();
-//        }
-//    }
+    public void eval(  Object instance, java.util.List handlers ) {
+        if ( ((org.alfresco.decision.tree.infra.test.Person)instance).getAge( ).intValue() < 30 ) {
+            if ( ((org.alfresco.decision.tree.infra.test.Person)instance).getCity( ).equals("Mendoza") ) {
+                for( Object o : handlers ){
+                    ((org.alfresco.decision.tree.model.api.Handler)o).notifyDecisionMade("Doesn't Apply");
+                }
+            } else if ( ((org.alfresco.decision.tree.infra.test.Person)instance).getCity( ).equals("London") ) {
+                if ( ((org.alfresco.decision.tree.infra.test.Person)instance).getMarried( ).booleanValue() ==false ) {
+                    for( Object o : handlers ){
+                        ((org.alfresco.decision.tree.model.api.Handler)o).notifyDecisionMade("Send Ad 1");
+                    }
+                } else if ( ((org.alfresco.decision.tree.infra.test.Person)instance).getMarried( ).booleanValue() ==true ) {
+                    for( Object o : handlers ){
+                        ((org.alfresco.decision.tree.model.api.Handler)o).notifyDecisionMade("Send Ad 2");
+                    }
+                }
+            }
+        } else if ( ((org.alfresco.decision.tree.infra.test.Person)instance).getAge( ).intValue() > 30 ) {
+            for( Object o : handlers ){
+                ((org.alfresco.decision.tree.model.api.Handler)o).notifyDecisionMade("Too Old");
+            }
+        }
+    }
+
 
 }

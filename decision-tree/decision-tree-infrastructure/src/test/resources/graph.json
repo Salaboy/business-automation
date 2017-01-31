@@ -2,7 +2,7 @@
   "nodes": [
     {
       "data": {
-        "id": "n0",
+        "id": "root",
         "name": "Person",
         "type": "root"
       },
@@ -150,9 +150,11 @@
   "edges": [
     {
       "data": {
-        "source": "n0",
+        "source": "root",
         "target": "n1",
-        "id": "ed568738-529e-4402-b277-7a9231d028e0"
+        "id": "ed568738-529e-4402-b277-7a9231d028e0",
+        "value": "from type",
+        "operator": "FORWARD"
       },
       "position": {},
       "group": "edges",

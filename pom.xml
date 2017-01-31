@@ -22,6 +22,7 @@
         <version.json-path>2.2.0</version.json-path>
         <version.javassist>3.12.1.GA</version.javassist>
         <version.gson>2.7</version.gson>
+        <version.graphviz>0.1.1-SNAPSHOT</version.graphviz>
     </properties>
 
     <build>

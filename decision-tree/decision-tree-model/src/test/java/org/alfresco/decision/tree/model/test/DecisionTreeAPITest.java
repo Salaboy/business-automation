@@ -1,5 +1,15 @@
 package org.alfresco.decision.tree.model.test;
 
+import org.alfresco.business.api.DesignModel;
+import org.alfresco.business.api.EventListener;
+import org.alfresco.business.api.ExecutableModel;
+import org.alfresco.business.api.events.AfterExecutionEvent;
+import org.alfresco.business.api.events.AfterGenerationEvent;
+import org.alfresco.business.api.events.BeforeExecutionEvent;
+import org.alfresco.business.api.events.BeforeGenerationEvent;
+import org.alfresco.business.base.BaseDesignModel;
+import org.alfresco.business.base.BaseExecutableModel;
+import org.alfresco.business.base.BaseGenerator;
 import org.alfresco.decision.tree.model.api.ConditionalNode;
 import org.alfresco.decision.tree.model.api.Node;
 import org.alfresco.decision.tree.model.api.Path;
@@ -9,6 +19,7 @@ import org.alfresco.decision.tree.model.impl.ConditionalNodeImpl;
 import org.alfresco.decision.tree.model.impl.EndNodeImpl;
 import org.alfresco.decision.tree.model.impl.PathImpl;
 import org.alfresco.decision.tree.model.impl.TreeImpl;
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.alfresco.decision.tree.model.api.Path.Operator.EQUALS;
@@ -22,11 +33,11 @@ import static org.junit.Assert.*;
 public class DecisionTreeAPITest {
 
     @Test
-    public void simplDecisionTreeAPITest(){
+    public void simpleDecisionTreeAPITest() {
 
         ConditionalNode ageNode = new ConditionalNodeImpl("n0", "age");
 
-        Tree t = new TreeImpl( "my person tree", Person.class, ageNode);
+        Tree t = new TreeImpl("my person tree", Person.class, ageNode);
 
         Path lt30Path = new PathImpl(LESS_THAN, "30");
         ConditionalNode cityNode = new ConditionalNodeImpl("n1", "city");
@@ -56,30 +67,34 @@ public class DecisionTreeAPITest {
         marriedNode.addPath(marriedPath);
         marriedNode.addPath(notMarriedPath);
 
+
         assertEquals(ageNode, t.rootNode().path().nodeTo());
+        assertEquals(2, ((ConditionalNode) t.rootNode().path().nodeTo()).paths().size());
 
 
     }
 
     @Test
-    public void simplDecisionTreeFluentTest(){
-        Tree t = new TreeFluent().newTree( "my person tree", Person.class)
+    public void simpleDecisionTreeFluentTest() {
+        Tree t = new TreeFluent().newTree("my person tree", Person.class)
                 .condition("age")
-                    .path(LESS_THAN, "30")
-                        .condition("city")
-                            .path(EQUALS, "Mendoza").end("Doesn't Apply")
-                            .path(EQUALS, "London")
-                                .condition("married")
-                                    .path(EQUALS, "true").end("Send Ad 2")
-                                    .path(EQUALS, "false").end("Send Ad 1")
-                                .endCondition()
-                            .endCondition()
-                    .path(GREATER_THAN, "30").end("Too Old")
+                .path(LESS_THAN, "30")
+                .condition("city")
+                .path(EQUALS, "Mendoza").end("Doesn't Apply")
+                .path(EQUALS, "London")
+                .condition("married")
+                .path(EQUALS, "true").end("Send Ad 2")
+                .path(EQUALS, "false").end("Send Ad 1")
+                .endCondition()
+                .endCondition()
+                .path(GREATER_THAN, "30").end("Too Old")
                 .endCondition()
                 .build();
 
         assertEquals("age", t.rootNode().path().nodeTo().name());
-
+        assertEquals(2, ((ConditionalNode) t.rootNode().path().nodeTo()).paths().size());
 
     }
+
+
 }

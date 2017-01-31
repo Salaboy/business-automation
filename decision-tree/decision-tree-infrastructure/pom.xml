@@ -25,6 +25,12 @@
         </dependency>
 
         <dependency>
+            <groupId>guru.nidi</groupId>
+            <artifactId>graphviz-java</artifactId>
+            <version>${version.graphviz}</version>
+        </dependency>
+
+        <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>${version.javassist}</version>

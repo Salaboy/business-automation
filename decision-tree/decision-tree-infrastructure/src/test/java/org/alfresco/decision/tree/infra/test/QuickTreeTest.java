@@ -4,10 +4,14 @@ package org.alfresco.decision.tree.infra.test;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import guru.nidi.graphviz.model.Link;
+import guru.nidi.graphviz.model.MutableGraph;
+import guru.nidi.graphviz.model.MutableNode;
+import guru.nidi.graphviz.parse.Parser;
 import javassist.CannotCompileException;
 
 import org.alfresco.decision.tree.infra.impl.QuickTree;
@@ -20,6 +24,7 @@ import org.junit.Test;
 import static org.alfresco.decision.tree.model.api.Path.Operator.EQUALS;
 import static org.alfresco.decision.tree.model.api.Path.Operator.GREATER_THAN;
 import static org.alfresco.decision.tree.model.api.Path.Operator.LESS_THAN;
+import static org.junit.Assert.assertNotNull;
 
 
 /**
@@ -72,11 +77,13 @@ public class QuickTreeTest {
 
         TreeInstance treeInstance = QuickTree.createTreeInstance(generated);
 
-        Map<String, Handler> handlers = new HashMap<>();
-        handlers.put("Send Ad 1", new PrintoutHandler("Sending Ad 1..."));
-        handlers.put("Send Ad 2", new PrintoutHandler("Sending Ad 2..."));
-        handlers.put("Too Old", new PrintoutHandler("Too Old for me..."));
-        handlers.put("Doesn't Apply", new PrintoutHandler("City Doesn't apply..."));
+//        Map<String, Handler> handlers = new HashMap<>();
+//        handlers.put("Send Ad 1", new PrintoutHandler("Sending Ad 1..."));
+//        handlers.put("Send Ad 2", new PrintoutHandler("Sending Ad 2..."));
+//        handlers.put("Too Old", new PrintoutHandler("Too Old for me..."));
+//        handlers.put("Doesn't Apply", new PrintoutHandler("City Doesn't apply..."));
+        List<Handler> handlers = new ArrayList<>();
+        handlers.add(new PrintoutHandler());
 
         treeInstance.eval(new Person("London", 17, true), handlers);
 
@@ -114,12 +121,14 @@ public class QuickTreeTest {
 
         TreeInstance treeInstance = QuickTree.createTreeInstance(generated);
 
-        Map<String, Handler> handlers = new HashMap<>();
-        handlers.put("Send Ad 1", new PrintoutHandler("Sending Ad 1..."));
-        handlers.put("Send Ad 2", new PrintoutHandler("Sending Ad 2..."));
-        handlers.put("Too Old", new PrintoutHandler("Too Old for me..."));
-        handlers.put("Doesn't Apply", new PrintoutHandler("City Doesn't apply..."));
+//        Map<String, Handler> handlers = new HashMap<>();
+//        handlers.put("Send Ad 1", new PrintoutHandler("Sending Ad 1..."));
+//        handlers.put("Send Ad 2", new PrintoutHandler("Sending Ad 2..."));
+//        handlers.put("Too Old", new PrintoutHandler("Too Old for me..."));
+//        handlers.put("Doesn't Apply", new PrintoutHandler("City Doesn't apply..."));
 
+        List<Handler> handlers = new ArrayList<>();
+        handlers.add(new PrintoutHandler());
         treeInstance.eval(new Person("London", 17, true), handlers);
 
     }
@@ -175,6 +184,42 @@ public class QuickTreeTest {
         } else if (node instanceof EndNode) {
             // do some styling here.. 
         }
+    }
+
+    @Test
+    public void graphvizParserTest() throws IOException {
+        String model =  "digraph G { rankdir=LR;" +
+                "\"Person\" -> \"Age?\" " +
+                "\"Age?\" -> \"City?\"  [label = \">30\"]" +
+                "\"Age?\" -> \"Too Old\"  [label = \"<30\", style = \"bold\"]" +
+                "\"City?\" -> \"London?\"" +
+                "\"City?\" -> \"Mendoza?\"" +
+                "\"Mendoza?\" -> \"Don't apply\" [style = \"bold\"]" +
+                "\"London?\" -> \"Married?\"" +
+                "\"Married?\" -> \"Send Ad 1\"  [label = \"false\", style = \"bold\"]" +
+                "\"Married?\" -> \"Send Ad 2\"  [label = \"true\", style = \"bold\"]" +
+                "}";
+        MutableGraph graphvizModel = Parser.read(model);
+
+        assertNotNull(graphvizModel);
+        System.out.println("- Graph label: " + graphvizModel.isDirected());
+        System.out.println("- Graph is directed: " + graphvizModel.isDirected());
+        System.out.println("- Graph is cluster: " + graphvizModel.isCluster());
+
+        for(MutableNode n : graphvizModel.allNodes()){
+            System.out.println(">>> Start Node: " + n.label());
+            for(Link l: n.links()) {
+                System.out.println("Link -> to: " + l.to().toString());
+                Map<String, Object> stringObjectHashMap = new HashMap<>();
+                Map<String, Object> stringObjectMap = l.attrs().applyTo(stringObjectHashMap);
+                System.out.println("Link ->  attrs: " +stringObjectMap.get("label"));
+            }
+            System.out.println(">>> End Node: " + n.label());
+
+        }
+
+
+
     }
 
 }

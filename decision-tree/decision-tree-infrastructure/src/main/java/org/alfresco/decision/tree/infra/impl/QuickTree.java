@@ -8,7 +8,11 @@ import java.util.UUID;
 import static org.alfresco.decision.tree.model.api.Path.Operator.*;
 
 /**
- * Created by salaboy on 21/11/2016.
+ * This class is in charge of generating TreeInstance implementations.
+ * I uses javassist to create the class and add the generated logic from the tree definition.
+ * If a better approach for code generation is found, we should replace this class
+ * This class also opens the doors for a lot of decision making optimization (hashing values and ranges)
+ * and validations (range consistency and type checking).
  */
 public class QuickTree {
 
@@ -27,7 +31,7 @@ public class QuickTree {
         StringBuilder sb = new StringBuilder();
         Node rootNode = t.rootNode();
         sb.append("public void eval( ").append(" Object instance")
-                .append(", java.util.Map handlers) { \n");
+                .append(", java.util.List handlers ) { \n");
         go(t.clazz(), rootNode, sb, 0);
         sb.append("}\n");
         return sb.toString();
@@ -67,7 +71,11 @@ public class QuickTree {
                 i++;
             }
         } else if (node instanceof EndNode) {
-            sb.append(tabs.toString()).append("((org.alfresco.decision.tree.model.api.Handler)").append("handlers.get( \"").append(node.name()).append("\" )).execute();\n");
+            //For Each Handler notify about decision made:  handler.notifyDecisionMade("end node name");
+            sb.append(tabs.toString())
+                    .append("for( int i = 0; i < handlers.size(); i ++ ){\n")
+                            .append(tabs.toString()).append("\t((org.alfresco.decision.tree.model.api.Handler)handlers.get(i)).notifyDecisionMade(\"").append(node.name()).append("\");\n")
+                    .append("}\n");
 
         }
 
