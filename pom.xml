@@ -12,6 +12,7 @@
         <module>model</module>
         <module>infrastructure</module>
         <module>decision-tree</module>
+        <module>dashboard</module>
 
     </modules>
 
@@ -23,6 +24,7 @@
         <version.javassist>3.12.1.GA</version.javassist>
         <version.gson>2.7</version.gson>
         <version.graphviz>0.1.1-SNAPSHOT</version.graphviz>
+
     </properties>
 
     <build>
@@ -39,4 +41,16 @@
         </plugins>
 
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>4.3.2.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

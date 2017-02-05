@@ -15,6 +15,7 @@
     <modules>
         <module>decision-tree-model</module>
         <module>decision-tree-infrastructure</module>
+        <module>decision-tree-service</module>
     </modules>
 
 </project>

@@ -1,4 +1,4 @@
-package org.alfresco.decision.tree.infra.impl;
+package org.alfresco.decision.tree.infra.test;
 
 import org.alfresco.business.api.Event;
 import org.alfresco.business.api.EventListener;
