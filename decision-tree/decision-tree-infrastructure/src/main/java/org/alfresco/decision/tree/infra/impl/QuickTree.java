@@ -18,6 +18,7 @@ public class QuickTree {
 
     public static TreeInstance createTreeInstance(String generated) throws RuntimeException, IllegalAccessException, InstantiationException, CannotCompileException, CannotCompileException {
         ClassPool pool = ClassPool.getDefault();
+        pool.insertClassPath(new ClassClassPath(QuickTree.class));
         CtClass evalClass = pool.makeClass("TreeInstanceImpl" + UUID.randomUUID().toString());
         evalClass.addInterface(pool.makeClass("org.alfresco.decision.tree.model.api.TreeInstance"));
         CtMethod method = CtNewMethod.make(generated, evalClass);
@@ -48,6 +49,12 @@ public class QuickTree {
         }
         if (node instanceof ConditionalNode) {
             int i = 0;
+            //For Each Handler notify about conditional node reached:  handler.notifyConditionReached("conditional node name");
+            sb.append(tabs.toString())
+                    .append("for( int i = 0; i < handlers.size(); i ++ ){\n")
+                    .append(tabs.toString()).append("\t((org.alfresco.decision.tree.model.api.Handler)handlers.get(i)).notifyConditionReached(\"").append(node.name()).append("\");\n")
+            .append(tabs.toString()).append("}\n");
+
             Collection<Path> paths = ((ConditionalNode) node).paths();
             for (Path path : paths) {
                 if (i == 0) {
@@ -62,6 +69,12 @@ public class QuickTree {
                 sb.append(operatorString);
 
                 sb.append(" ) { \n");
+                //For Each Handler notify about path taken:  handler.notifyPathTaken("path name");
+                sb.append(tabs.toString())
+                        .append("for( int i = 0; i < handlers.size(); i ++ ){\n")
+                        .append(tabs.toString()).append("\t((org.alfresco.decision.tree.model.api.Handler)handlers.get(i)).notifyPathTaken(\"").append(path.operator().name())
+                        .append(" ").append(path.condition()).append("\");\n")
+                .append(tabs.toString()).append("}\n");
                 go(type, path.nodeTo(), sb, level + 1);
                 if ((paths.size() == 1 && i == 0) || paths.size() == i + 1) {
                     sb.append(tabs.toString()).append(" }\n");
@@ -75,7 +88,7 @@ public class QuickTree {
             sb.append(tabs.toString())
                     .append("for( int i = 0; i < handlers.size(); i ++ ){\n")
                             .append(tabs.toString()).append("\t((org.alfresco.decision.tree.model.api.Handler)handlers.get(i)).notifyDecisionMade(\"").append(node.name()).append("\");\n")
-                    .append("}\n");
+                    .append(tabs.toString()).append("}\n");
 
         }
 

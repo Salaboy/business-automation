@@ -20,6 +20,7 @@ public class DecisionTreeExecutableModel extends BaseExecutableModel {
 
     private Set<EventListener> listeners = new HashSet<>();
     private TreeInstance treeInstance;
+    private List<Handler> handlers = new ArrayList<>();
 
     public DecisionTreeExecutableModel(DesignModel designModel, TreeInstance treeInstance) {
         super(designModel);
@@ -28,7 +29,7 @@ public class DecisionTreeExecutableModel extends BaseExecutableModel {
 
     @Override
     public DesignModel designModel() {
-        return designModel();
+        return super.designModel();
     }
 
     @Override
@@ -36,21 +37,25 @@ public class DecisionTreeExecutableModel extends BaseExecutableModel {
         for (EventListener l : eventListeners()) {
             l.onEvent(new BeforeExecutionEvent());
         }
-
-     //   remove handlers and introduce event based notifications for decisions.. time to add infrastructure
-//        Map<String, Handler> handlers = new HashMap<>();
-//        handlers.put("Send Ad 1", new PrintoutHandler("Sending Ad 1..."));
-//        handlers.put("Send Ad 2", new PrintoutHandler("Sending Ad 2..."));
-//        handlers.put("Too Old", new PrintoutHandler("Too Old for me..."));
-//        handlers.put("Doesn't Apply", new PrintoutHandler("City Doesn't apply..."));
-
-        List<Handler> handlers = new ArrayList<>();
-        handlers.add(new PrintoutHandler());
+        if(handlers == null || handlers.isEmpty()) {
+            handlers.add(new PrintoutHandler());
+        }
         treeInstance.eval(input, handlers);
 
         for (EventListener l : eventListeners()) {
             l.onEvent(new AfterExecutionEvent());
         }
+    }
+
+    public void setHandlers(List<Handler> handlers){
+        this.handlers = handlers;
+    }
+
+    public void addHandler(Handler handler){
+        if(handlers == null){
+            handlers = new ArrayList<>();
+        }
+        handlers.add(handler);
     }
 
     @Override

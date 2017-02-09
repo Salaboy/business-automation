@@ -2,10 +2,12 @@ package org.alfresco.decision.tree.infra.test;
 
 import org.alfresco.business.api.DesignModel;
 import org.alfresco.business.api.ExecutableModel;
+import org.alfresco.decision.tree.infra.impl.DecisionTreeExecutableModel;
 import org.alfresco.decision.tree.infra.impl.DecisionTreeGenerator;
 import org.alfresco.decision.tree.model.api.ConditionalNode;
 import org.alfresco.decision.tree.model.api.Tree;
 import org.alfresco.decision.tree.model.api.fluent.TreeFluent;
+import org.alfresco.decision.tree.model.impl.handlers.PrintoutHandler;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -51,10 +53,17 @@ public class QuickTreeTest {
         
         executableModel.addEventListener(mockEventListener);
 
-        executableModel.execute(new Person("Mendoza", 33, true ));
+        MockHandler handler = new MockHandler();
+        PrintoutHandler printoutHandler = new PrintoutHandler();
+
+        ((DecisionTreeExecutableModel)executableModel).addHandler(printoutHandler);
+        ((DecisionTreeExecutableModel)executableModel).addHandler(handler);
+
+        executableModel.execute(new Person("London", 25, false ));
        
         Assert.assertEquals(4, mockEventListener.events().size());
 
+        assertEquals(7, handler.getNotifications().size());
 
     }
 

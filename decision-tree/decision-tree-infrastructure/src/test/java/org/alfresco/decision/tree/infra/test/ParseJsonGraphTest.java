@@ -4,21 +4,38 @@ package org.alfresco.decision.tree.infra.test;
 
 import com.google.gson.*;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import javassist.CannotCompileException;
 
-import javassist.NotFoundException;
+import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JType;
+import javassist.*;
+
+import org.alfresco.decision.tree.infra.impl.PojoGenerator;
 import org.alfresco.decision.tree.infra.impl.QuickTree;
 import org.alfresco.decision.tree.model.api.*;
 import org.alfresco.decision.tree.model.impl.*;
 import org.alfresco.decision.tree.model.impl.handlers.PrintoutHandler;
+import org.apache.commons.io.FileUtils;
+
+
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.jsonschema2pojo.*;
+import org.jsonschema2pojo.rules.RuleFactory;
+import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -26,7 +43,115 @@ import org.junit.Test;
  */
 public class ParseJsonGraphTest {
 
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+    
     @Test
+    public void createJsonPojoAndGSonParsingTest() throws IOException, NotFoundException, CannotCompileException, IllegalAccessException, InstantiationException {
+
+       JCodeModel codeModel = new JCodeModel();
+
+        GenerationConfig config = new DefaultGenerationConfig() {
+
+            @Override
+            public String getTargetPackage() {
+                return "org.alfresco.generated";
+            }
+
+            @Override
+            public boolean isIncludeConstructors() {
+                return true;
+            }
+
+            @Override
+            public boolean isIncludeAccessors() {
+                return true;
+            }
+
+            @Override
+            public boolean isUseJodaDates() {
+                return true;
+            }
+
+
+
+            @Override
+            public SourceType getSourceType() {
+                return SourceType.JSON;
+            }
+
+            @Override
+            public boolean isIncludeHashcodeAndEquals() {
+                return false;
+            }
+
+            @Override
+            public boolean isIncludeAdditionalProperties() {
+                return false;
+            }
+
+            @Override
+            public boolean isIncludeToString() {
+                return false;
+            }
+        };
+
+        String json = " {\n" +
+                "        \"age\": 25,\n" +
+                "        \"married\": \"false\",\n" +
+                "        \"city\" : \"London\"\n" +
+                "    }";
+        SchemaMapper mapper = new SchemaMapper(new RuleFactory(config, new NoopAnnotator(), new SchemaStore()), new SchemaGenerator());
+        JType jType = mapper.generate(codeModel, "ClassName", "org.alfresco.generated", json);
+
+
+        File dir = tempFolder.newFolder("output");
+        codeModel.build(dir);
+
+        String[] exts = {"java"};
+        Collection<File> files = FileUtils.listFiles(dir, exts , true);
+        for(File f : files){
+            // Read it from temp file
+            final String s = FileUtils.readFileToString(f);
+            System.out.println(s);
+            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+
+            int result = compiler.run(null, null, null, f.getAbsolutePath());
+
+            System.out.println("Compile result code = " + result);
+
+            ClassPool pool = ClassPool.getDefault();
+            File file = new File(f.getAbsolutePath().replace("java", "class"));
+            assertTrue(file.exists());
+
+            CtClass cc = pool.makeClass(FileUtils.openInputStream(file));
+
+            System.out.println(cc);
+
+            Class aClass = cc.toClass();
+
+            System.out.println(aClass);
+            Gson gson = new GsonBuilder().create();
+            Object o1 = gson.fromJson(json, aClass);
+
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+    }
+
+    @Test
+    @Ignore
     public void hello() throws FileNotFoundException, ClassNotFoundException, NotFoundException, CannotCompileException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
         Gson gson = new GsonBuilder().create();
 
@@ -124,11 +249,7 @@ public class ParseJsonGraphTest {
 
         String generated = QuickTree.generateCode(t);
         System.out.println(generated);
-//        Map<String, Handler> handlers = new HashMap<>();
-//        handlers.put("Send Ad 1", new PrintoutHandler("Sending Ad 1..."));
-//        handlers.put("Send Ad 2", new PrintoutHandler("Sending Ad 2..."));
-//        handlers.put("Too Old", new PrintoutHandler("Too Old..."));
-//        handlers.put("Doesn't Apply", new PrintoutHandler("Doesn't apply..."));
+
         List<Handler> handlers = new ArrayList<>();
         handlers.add(new PrintoutHandler());
 

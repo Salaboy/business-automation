@@ -24,6 +24,7 @@
         <version.javassist>3.12.1.GA</version.javassist>
         <version.gson>2.7</version.gson>
         <version.graphviz>0.1.1-SNAPSHOT</version.graphviz>
+        <version.jsonschema2pojo>0.4.30</version.jsonschema2pojo>
 
     </properties>
 
